@@ -1,7 +1,7 @@
 // Log a message to the browser console to confirm the script is running.
 console.log("YouTube Auto Jump Ahead is active!");
 
-// The CORRECT technical HTML tag name for the container, found via debugging.
+// The technical HTML tag name for the container.
 const CONTAINER_TAG_NAME = 'ytw-timely-action-view-model';
 
 /**
@@ -58,4 +58,5 @@ const readyCheckInterval = setInterval(() => {
     clearInterval(readyCheckInterval);
     startObserver();
   }
+
 }, 250);
