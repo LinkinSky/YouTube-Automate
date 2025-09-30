@@ -1,6 +1,6 @@
-# YouTube Auto Jump Ahead
+# YouTube Automate
 
-A simple Chrome extension that automatically clicks the "Jump ahead" button on YouTube videos, making your viewing experience smoother.
+A simple Chrome extension that automates actions, making your viewing experience smoother.
 
 ## Features
 - Automatically detects and clicks the "Jump ahead" button.
