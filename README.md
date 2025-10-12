@@ -3,7 +3,8 @@
 A simple Chrome extension that automates actions, making your viewing experience smoother.
 
 ## Features
-- Automatically detects and clicks the "Jump ahead" button (YouTube Premium feature).
+- Auto Jump Ahead: Automatically detects and clicks the "Jump ahead" button (YouTube Premium feature).
+- Auto Next Short: Automatically moves to the next short.
 
 ## Installation
 1. Download the code as a ZIP file.

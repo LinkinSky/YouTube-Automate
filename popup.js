@@ -1,15 +1,23 @@
-// Wait for the popup's DOM content to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-    const toggle = document.getElementById('autoJumpAheadToggle');
+    const jumpAheadToggle = document.getElementById('autoJumpAheadToggle');
+    const nextShortToggle = document.getElementById('autoNextShortToggle');
 
-    // Retrieve the saved value for "Auto Jump Ahead" from storage.
-    // The '?? true' sets the default value to true if it doesn't exist yet.
-    chrome.storage.sync.get({ autoJumpAheadEnabled: true }, function(data) {
-        toggle.checked = data.autoJumpAheadEnabled;
+    // Retrieve all saved values.
+    chrome.storage.sync.get({ 
+        autoJumpAheadEnabled: true,
+        autoNextShortEnabled: true
+    }, function(data) {
+        jumpAheadToggle.checked = data.autoJumpAheadEnabled;
+        nextShortToggle.checked = data.autoNextShortEnabled;
     });
 
-    // Keep the listener for our single switch
-    toggle.addEventListener('change', function() {
+    // Add listener for the Jump Ahead switch
+    jumpAheadToggle.addEventListener('change', function() {
         chrome.storage.sync.set({ autoJumpAheadEnabled: this.checked });
+    });
+
+    // Add listener for the Auto Next Short switch
+    nextShortToggle.addEventListener('change', function() {
+        chrome.storage.sync.set({ autoNextShortEnabled: this.checked });
     });
 });

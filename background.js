@@ -1,39 +1,40 @@
-// This Set acts as our "guest list" or bouncer.
-// It will store the Tab IDs where the script has already been injected for the current page view.
-const injectedTabs = new Set();
+// background.js - Final English Version
 
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  // We only care about tabs that have finished loading and have a URL.
+/**
+ * Listens for updates to any tab in the browser.
+ * This is the main entry point to decide when to inject our content script.
+ */
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  // We only act when the tab has finished loading and has a valid URL.
   if (changeInfo.status !== 'complete' || !tab.url) {
     return;
   }
 
-  // Strict check: The URL must be a YouTube video page.
+  // Strict check to ensure we are on a YouTube video or shorts page.
   try {
     const url = new URL(tab.url);
-    if (url.hostname !== 'www.youtube.com' || url.pathname !== '/watch') {
-      return;
-    }
-  } catch (e) {
-    return; // Invalid URL, ignore.
-  }
+    const isTargetPage = url.hostname === 'www.youtube.com' && (url.pathname === '/watch' || url.pathname.startsWith('/shorts/'));
 
-  // --- PING-PONG LOGIC ---
-  // We "knock on the door" before entering.
-  chrome.tabs.sendMessage(tabId, { type: "PING" }, (response) => {
-    // Check if we received an error (meaning no one answered).
-    if (chrome.runtime.lastError) {
-      console.log(`Content script not found in tab ${tabId}. Injecting now.`);
-      
-      // The coast is clear, inject the script.
-      chrome.scripting.executeScript({
-        target: { tabId: tabId },
-        files: ['content.js']
-      }).catch(err => console.error("Error injecting script:", err));
+    if (isTargetPage) {
+      // --- PING-PONG LOGIC ---
+      // This prevents injecting the script multiple times on the same page.
+      // We "knock on the door" by sending a "PING" message.
+      chrome.tabs.sendMessage(tabId, { type: "PING" }, (response) => {
+        // If we get an error, it means no one answered the door (the script isn't there).
+        if (chrome.runtime.lastError) {
+          console.log(`Content script not found in tab ${tabId}. Injecting now.`);
+          
+          // The coast is clear, inject the script.
+          chrome.scripting.executeScript({
+            target: { tabId: tabId },
+            files: ['content.js']
+          }).catch(err => console.error("Error injecting script:", err));
 
-    } else {
-      // We received a "PONG" response, the script is already there.
-      console.log(`Content script already active in tab ${tabId}. Doing nothing.`);
+        } else {
+          // If we received a "PONG" response, the script is already active.
+          console.log(`Content script already active in tab ${tabId}. Doing nothing.`);
+        }
+      });
     }
-  });
+  } catch (e) { /* Invalid URL, do nothing. */ }
 });
